@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}"
+>
+     <LinearLayout 
+    android:layout_width="match_parent"  
+    android:layout_height="match_parent"  
+     android:orientation="horizontal" >  
+    
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+  
+        <Button
+            android:id="@+id/login_btn"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+            android:text="FaceBooklogin" />
+
+        <Button
+            android:id="@+id/googlelogin_btn"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+            android:text="Googlelogin" />
+
+        <Button
+            android:id="@+id/pay_btn"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+            android:text="pay" />
+        
+        <Button   
+            android:id="@+id/btn_clock"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="解锁成就I need Money"/>  
+                <Button   
+            android:id="@+id/btn_add"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="添加I need Money点数10"/>  
+                <Button   
+            android:id="@+id/btn_top"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="上传排行榜"/>  
+        <Button   
+            android:id="@+id/btn_top1"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="排行榜加分"/>
+                </LinearLayout> 
+                
+     <LinearLayout 
+    android:layout_width="match_parent"  
+    android:layout_height="match_parent"  
+    android:orientation="vertical" >  
+                <Button   
+            android:id="@+id/btn_"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="图片分享"/>  
+                  
+                <Button   
+            android:id="@+id/btn6"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="缩略图分享"/>  
+                <Button   
+            android:id="@+id/btn7"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="向指定好友分享游戏"/>  
+                <Button   
+            android:id="@+id/btn8"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="分享到facebook主页"/>  
+                <Button   
+            android:id="@+id/btn9"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="邀请好友"/>  
+                        <Button   
+            android:id="@+id/btn10"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="获取邀请的好友信息"/>  
+                        <Button   
+            android:id="@+id/btn11"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="requestAllFriends"/>  
+                        <Button   
+            android:id="@+id/btn12"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="获取本应用中FB的好友信息"/>  
+                        <Button   
+            android:id="@+id/btn13"
+        android:layout_width="100dp"  
+        android:layout_height="wrap_content"  
+        android:text="Button1"/>  
+  </LinearLayout> 
+  </LinearLayout>
+
+</RelativeLayout>
