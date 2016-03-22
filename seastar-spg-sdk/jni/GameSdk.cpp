@@ -23,6 +23,7 @@ void Java_com_seastar_spg_Interface_GameSdk_onFbInitCb(JNIEnv *env, jclass obj, 
 	}
 }
 
+
 void Java_com_seastar_spg_Interface_GameSdk_onGoogleInitCb(JNIEnv *env, jclass obj, jint flags)
 {
 	if (flags)
@@ -181,7 +182,7 @@ void Java_com_seastar_spg_Interface_GameSdk_onQueryGoogleInventory(JNIEnv *env, 
 			std::string title = value[i]["title"].GetString();
 			std::string type = value[i]["type"].GetString();
 			std::string priceAmountMicros = value[i]["priceAmountMicros"].GetString();
-			std::string priceCurrencyCode = value[i]["priceCurrencyCode"].GetString();
+			std::string priceCurrencyCode = value[i]["priceCurrencyCo de"].GetString();
 			std::string googleOrder = value[i]["googleOrder"].GetString();
 			std::string signature = value[i]["signature"].GetString();
 			std::string purchaseOriginalData = value[i]["purchaseOriginalData"].GetString();
@@ -198,6 +199,74 @@ void Java_com_seastar_spg_Interface_GameSdk_onQueryGoogleInventory(JNIEnv *env, 
 		// query success failure proc
 	}
 }
+
+
+void Java_com_seastar_spg_Interface_GameSdk_onFacebookSharePhoto(JNIEnv *env, jclass obj, jint flags)
+{
+	if (flags)
+	{
+		// init success proc
+	}
+	else
+	{
+		// init failure proc
+	}
+}
+
+void Java_com_seastar_spg_Interface_GameSdk_onFacebookShareLink(JNIEnv *env, jclass obj,jint flags)
+{
+	if (flags)
+	{
+		// init success proc
+	}
+	else
+	{
+		// init failure proc
+	}
+}
+
+void Java_com_seastar_spg_Interface_GameSdk_onInviteFriends(JNIEnv *env, jclass obj,jint flags)
+{
+	if (flags)
+	{
+		// init success proc
+	}
+	else
+	{
+		// init failure proc
+	}
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestAllFriends(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestAllFriendsNextPage(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestAllFriendsPrevPage(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestFriendsInApp(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestFriendsInAppNextPage(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
+void JNICALL Java_com_seastar_spg_Interface_GameSdk_onRequestFriendsInAppPrevPage(JNIEnv *env, jclass obj,jstring graph)
+{
+
+}
+
 
 void doFbInit()
 {
@@ -323,4 +392,253 @@ void queryGoogleInventory(std::vector<std::string> &skus)
 		t.env->DeleteLocalRef(t.classID);
 	}
 }
+
+void doFacebookSharePhoto(std::string &imageUri, std::string &caption,std::vector<std::string> &peopleIds, std::string &contentUri, std::string &refUrl)
+{
+	std::string strPeopleIds;
+
+	for (int i = 0;i< peopleIds.size();i++)
+	{
+		strPeopleIds = strPeopleIds+ " "+strPeopleIds[i];
+	}
+	strPeopleIds = strPeopleIds.substr(1,strPeopleIds.length());
+
+	JniMethodInfo t;
+		if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doFacebookSharePhoto",
+				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"))
+		{
+			jstring jimageUri = t.env->NewStringUTF(imageUri.c_str());
+			jstring jcaption = t.env->NewStringUTF(caption.c_str());
+			jstring jstrPeopleIds = t.env->NewStringUTF(strPeopleIds.c_str());
+			jstring jcontentUri = t.env->NewStringUTF(contentUri.c_str());
+			jstring jrefUrl = t.env->NewStringUTF(refUrl.c_str());
+
+			t.env->CallStaticVoidMethod(t.classID, t.methodID, jimageUri,jcaption,jstrPeopleIds,jcontentUri,jrefUrl);
+
+			t.env->DeleteLocalRef(jimageUri);
+			t.env->DeleteLocalRef(jcaption);
+			t.env->DeleteLocalRef(jstrPeopleIds);
+			t.env->DeleteLocalRef(jcontentUri);
+			t.env->DeleteLocalRef(jrefUrl);
+
+		    t.env->DeleteLocalRef(t.classID);
+
+		}
+
+}
+
+void doFacebookShareLink(std::string &url, std::string &title,std::string &contentDescription, std::string &imageUrl, std::string &peopleIds)
+{
+	std::string strPeopleIds;
+
+	for (int i = 0;i< peopleIds.size();i++)
+	{
+		strPeopleIds = strPeopleIds+" "+ strPeopleIds[i];
+	}
+	strPeopleIds = strPeopleIds.substr(1,strPeopleIds.length());
+
+	JniMethodInfo t;
+		if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doFacebookShareLink",
+				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"))
+		{
+			jstring jurl = t.env->NewStringUTF(url.c_str());
+			jstring jtitle = t.env->NewStringUTF(title.c_str());
+			jstring jcontentDescription = t.env->NewStringUTF(contentDescription.c_str());
+			jstring jimageUrl = t.env->NewStringUTF(imageUrl.c_str());
+			jstring jpeopleIds = t.env->NewStringUTF(strPeopleIds.c_str());
+
+			t.env->CallStaticVoidMethod(t.classID, t.methodID, jurl,jtitle,jcontentDescription,jimageUrl,jpeopleIds);
+
+			t.env->DeleteLocalRef(jurl);
+			t.env->DeleteLocalRef(jtitle);
+			t.env->DeleteLocalRef(jcontentDescription);
+			t.env->DeleteLocalRef(jimageUrl);
+			t.env->DeleteLocalRef(jpeopleIds);
+
+		    t.env->DeleteLocalRef(t.classID);
+
+		}
+
+}
+
+void doInviteFriends(std::string &applinkUrl,std::string &previewImageUrl)
+{
+
+	JniMethodInfo t;
+		if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doInviteFriends",
+				"(Ljava/lang/String;Ljava/lang/String;)V"))
+		{
+			jstring japplinkUrl = t.env->NewStringUTF(applinkUrl.c_str());
+			jstring jpreviewImageUrl = t.env->NewStringUTF(previewImageUrl.c_str());
+
+			t.env->CallStaticVoidMethod(t.classID, t.methodID, japplinkUrl,jpreviewImageUrl);
+
+			t.env->DeleteLocalRef(japplinkUrl);
+			t.env->DeleteLocalRef(jpreviewImageUrl);
+
+
+		    t.env->DeleteLocalRef(t.classID);
+
+		}
+}
+
+void doUnlockAchievement(std::string &achievementId)
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doUnlockAchievement",
+					"(Ljava/lang/String;)V"))
+			{
+				jstring jachievementId = t.env->NewStringUTF(achievementId.c_str());
+
+				t.env->CallStaticVoidMethod(t.classID, t.methodID, jachievementId);
+
+				t.env->DeleteLocalRef(jachievementId);
+
+			    t.env->DeleteLocalRef(t.classID);
+
+			}
+}
+
+void  doIncrementAchievement(std::string &achievementId, int score)
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doIncrementAchievement",
+					"(Ljava/lang/String;I)V"))
+			{
+				jstring jachievementId = t.env->NewStringUTF(achievementId.c_str());
+
+				t.env->CallStaticVoidMethod(t.classID, t.methodID, jachievementId,score);
+
+				t.env->DeleteLocalRef(jachievementId);
+
+			    t.env->DeleteLocalRef(t.classID);
+
+			}
+}
+
+void doShowAchievement()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doShowAchievement",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doUpdateScoreOnLeaderboard(std::string leaderboardId, int score)
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doUpdateScoreOnLeaderboard",
+					"(Ljava/lang/String;I)V"))
+			{
+				jstring jleaderboardId = t.env->NewStringUTF(leaderboardId.c_str());
+
+				t.env->CallStaticVoidMethod(t.classID, t.methodID, jleaderboardId,score);
+
+				t.env->DeleteLocalRef(jleaderboardId);
+
+			    t.env->DeleteLocalRef(t.classID);
+
+			}
+}
+
+void doShowLeaderboard()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doShowLeaderboard",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestAllFriends(std::string &height, std::string &width, std::string &limit)
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestAllFriends",
+					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"))
+			{
+				jstring jheight = t.env->NewStringUTF(height.c_str());
+				jstring jwidth = t.env->NewStringUTF(width.c_str());
+				jstring jlimit = t.env->NewStringUTF(limit.c_str());
+
+				t.env->CallStaticVoidMethod(t.classID, t.methodID, jheight, jwidth, jlimit);
+
+				t.env->DeleteLocalRef(jheight);
+				t.env->DeleteLocalRef(jwidth);
+				t.env->DeleteLocalRef(jlimit);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestAllFriendsNextPage()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestAllFriendsNextPage",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestAllFriendsPrevPage()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestAllFriendsPrevPage",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestFriendsInApp(std::string &limit)
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestFriendsInApp",
+					"(Ljava/lang/String;)V"))
+			{
+				jstring jlimit = t.env->NewStringUTF(limit.c_str());
+
+				t.env->CallStaticVoidMethod(t.classID, t.methodID,jlimit);
+
+				t.env->DeleteLocalRef(jlimit);
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestFriendsInAppNextPage()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestFriendsInAppNextPage",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+void doRequestFriendsInAppPrevPage()
+{
+	JniMethodInfo t;
+			if (JniHelper::getStaticMethodInfo(t, JAVA_CLASS, "doRequestFriendsInAppPrevPage",
+					"()V"))
+			{
+				t.env->CallStaticVoidMethod(t.classID, t.methodID);
+
+			    t.env->DeleteLocalRef(t.classID);
+			}
+}
+
+
 

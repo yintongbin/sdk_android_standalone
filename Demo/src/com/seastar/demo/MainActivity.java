@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +19,13 @@ import com.seastar.ppzj.gplaytw.R;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-	// static {
-	// System.loadLibrary("demo");
-	// }
-	//
+	 static {
+	 System.loadLibrary("demo");
+	 }
+	
 	Facebook fb = new Facebook();
 	Google google = new Google();
+//	GameSdk gameSdk = new GameSdk();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,27 +59,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		btn61.setOnClickListener(this);
 		// 此处是必须在主activity onCreate调用的方法
 
-		google.setCurActivity(this);
+//		google.setCurActivity(this);
+//		
+//		fb.setCurActivity(this);
+//
+//		google.init(new Google.OnInitCallBack() {
+//
+//			@Override
+//			public void onInitCallBack(boolean success) {
+//				// TODO 自动生成的方法存根
+//
+//			}
+//		});
+//
+//		fb.init(new Facebook.OnInitCallBack() {
+//
+//			@Override
+//			public void onInitCallBack(boolean isInit) {
+//				// TODO 自动生成的方法存根
+//
+//			}
+//		});
 		
-		fb.setCurActivity(this);
-
-		google.init(new Google.OnInitCallBack() {
-
-			@Override
-			public void onInitCallBack(boolean success) {
-				// TODO 自动生成的方法存根
-
-			}
-		});
-
-		fb.init(new Facebook.OnInitCallBack() {
-
-			@Override
-			public void onInitCallBack(boolean isInit) {
-				// TODO 自动生成的方法存根
-
-			}
-		});
+		GameSdk.setCurActivity(this);
+		GameSdk.init();
+		GameSdk.doFbInit();
+		GameSdk.doGoogleInit();
 
 	}
 
@@ -89,28 +96,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		// C++不使用这个
 		if (v.getId() == R.id.login_btn) {
 
-			fb.login(new Facebook.OnLoginCallBack() {
-
-				@Override
-				public void onLoginCallBack(boolean isLogin,
-						FacebookUserModel user) {
-					// TODO 自动生成的方法存根
-
-				}
-			});
-
+			GameSdk.doFbLogin();
+			
 		} else if (v.getId() == R.id.googlelogin_btn) {
 			// 此处时演示java怎么调用初始化方法
 			// C++不使用这个
-			google.login(new Google.OnLoginCallBack() {
-
-				@Override
-				public void onLoginCallBack(boolean success,
-						GoogleUserModel googleUserModel) {
-					// TODO 自动生成的方法存根
-
-				}
-			});
+			GameSdk.doGoogleLogin();
 			//
 		} else if (v.getId() == R.id.pay_btn) {
 			google.pay("", new Google.OnPayCallBack() {
@@ -159,43 +150,48 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			// peopleIds 分享到的好友id
 			// contentUri 内容uri
 			// refUrl 推荐网址
-			fb.sharePhotoByUri("https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1457664404&di=6cc7676d96060e4223151860e1a5c8d5&src=http://i3.shouyou.itc.cn/v3/news/2014/05/30/05301132139854688.jpg", "caption", peopleIds, null, "",
-					new Facebook.OnPhotoShareCallBack() {
-
-						@Override
-						public void onPhotoShareCallBack(boolean success) {
-							// TODO 自动生成的方法存根
-
-						}
-					});
+			GameSdk.doFacebookSharePhoto("file:///mnt/sdcard/blinkfeed_LANDSCAPE.jpg", "百度图片", "", null, null);
+//			fb.sharePhotoByUri(, , null,null,null,
+//					new Facebook.OnPhotoShareCallBack() {
+//
+//						@Override
+//						public void onPhotoShareCallBack(boolean success) {
+//							// TODO 自动生成的方法存根
+//
+//						}
+//					});
 		} else if (v.getId() == R.id.btn6) {
 			// url 链接
 			// title 链接内容的标题
 			// contentDescription 描述内容
 			// imageUrl 缩略图图像的URL
-			fb.shareUrl("url", "title", "contentDescription", "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1457664404&di=6cc7676d96060e4223151860e1a5c8d5&src=http://i3.shouyou.itc.cn/v3/news/2014/05/30/05301132139854688.jpg",
-					peopleIds, new Facebook.OnUrlShareCallBack() {
-
-						@Override
-						public void onUrlShareCallBack(boolean success) {
-							// TODO 自动生成的方法存根
-
-						}
-					});
-		}
-
+			
+			GameSdk.doFacebookShareLink("http://www.baidu.com", "百度分享", "百度分享描述", "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png", "");
+			
+//			fb.shareUrl("http://www.baidu.com", "百度分享", "百度分享描述", "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png",
+//					peopleIds, new Facebook.OnUrlShareCallBack() {
+//
+//						@Override
+//						public void onUrlShareCallBack(boolean success) {
+//							// TODO 自动生成的方法存根
+//
+//						}
+//					});
+		} 
 		else if (v.getId() == R.id.btn7) {
 
-			// 向指定好友分享游戏
-			fb.shareGame("title", "message", "", "ObjectId",
-					new Facebook.OnGameShareCallBack() {
-
-						@Override
-						public void onGameShareCallBack(boolean success) {
-							// TODO 自动生成的方法存根
-
-						}
-					});
+			GameSdk.doInviteFriends("http://www.baidu.com", "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png");
+			
+//			// 向指定好友分享游戏
+//			fb.shareGame("title", "message", "", "ObjectId",
+//					new Facebook.OnGameShareCallBack() {
+//
+//						@Override
+//						public void onGameShareCallBack(boolean success) {
+//							// TODO 自动生成的方法存根
+//
+//						}
+//					});
 		}
 
 		else if (v.getId() == R.id.btn8) {
@@ -211,8 +207,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			// peopleIds
 			// toId
 			// 另一种链接分享方式，使用web页面分享
-			fb.shareFeed("applink", "linkName", "caption", "description",
-					"http://img03.sogoucdn.com/app/a/100520093/2ad11b094c93197d-4afaf786506af54b-9fd277aea03c8387ebd35dcfba4ba3dd.jpg", peopleIds, "toId",
+			fb.shareFeed("http://www.baidu.com", "百度应用", "caption", "description",
+					"https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png", peopleIds, "",
 					new Facebook.OnShareFeedCallBack() {
 
 						@Override
@@ -240,16 +236,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		else if (v.getId() == R.id.btn10) {
 
 			// 获取邀请的好友信息
-			fb.requestInviteFriendsInfo("limit",
-					new Facebook.OnInviteFriendsInfoCallBack() {
-
-						@Override
-						public void onInviteFriendsInfoCallBack(String graph) {
-							// TODO 自动生成的方法存根
-
-						}
-					});
-			//
+			GameSdk.doRequestAllFriends("","","");
+			
 		}
 
 		else if (v.getId() == R.id.btn11) {
@@ -286,9 +274,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		// 此处是必须在主activity onActivityResult调用的方法
-		// GameSdk.onActivityResult(requestCode, resultCode, data);
-		google.onActivityResult(requestCode, resultCode, data);
-		fb.onActivityResult(requestCode, resultCode, data);
+		 GameSdk.onActivityResult(requestCode, resultCode, data);
+	//	google.onActivityResult(requestCode, resultCode, data);
+		//fb.onActivityResult(requestCode, resultCode, data);
+		
+		
 
 	}
 

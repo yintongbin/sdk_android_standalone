@@ -123,54 +123,59 @@ public class Facebook {
 
 	public void init(final OnInitCallBack oick) {
 
-		FacebookSdk.sdkInitialize(activity.getApplicationContext(), new FacebookSdk.InitializeCallback() {
-			@Override
-			public void onInitialized() {
-				if (FacebookSdk.isInitialized()) {
-					Log.d(TAG, "Facebook::init, init success!");
-					oick.onInitCallBack(true);
-				} else {
-					Log.d(TAG, "Facebook::init, init failed!");
-					oick.onInitCallBack(false);
-				}
-			}
-		});
+		FacebookSdk.sdkInitialize(activity.getApplicationContext(),
+				new FacebookSdk.InitializeCallback() {
+					@Override
+					public void onInitialized() {
+						if (FacebookSdk.isInitialized()) {
+							Log.d(TAG, "Facebook::init, init success!");
+							oick.onInitCallBack(true);
+						} else {
+							Log.d(TAG, "Facebook::init, init failed!");
+							oick.onInitCallBack(false);
+						}
+					}
+				});
 
 		callbackManager = CallbackManager.Factory.create();
-		LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-			@Override
-			public void onSuccess(LoginResult loginResult) {
-				Log.d(TAG, "Facebook::login login success!");
-				getMyInfo();
-			}
+		LoginManager.getInstance().registerCallback(callbackManager,
+				new FacebookCallback<LoginResult>() {
+					@Override
+					public void onSuccess(LoginResult loginResult) {
+						Log.d(TAG, "Facebook::login login success!");
+						getMyInfo();
+					}
 
-			@Override
-			public void onCancel() {
-				Log.d(TAG, "Facebook::login login cancel!");
-				onLoginCallBack.onLoginCallBack(false, null);
-				onLoginCallBack = null;
-			}
+					@Override
+					public void onCancel() {
+						Log.d(TAG, "Facebook::login login cancel!");
+						onLoginCallBack.onLoginCallBack(false, null);
+						onLoginCallBack = null;
+					}
 
-			@Override
-			public void onError(FacebookException e) {
-				Log.d(TAG, "请检查如下情况：");
-				Log.d(TAG, "1: APK的keyhash是否跟facebook后台一致");
-				Log.d(TAG, "2: 包名是否跟facebook后台一致");
-				Log.d(TAG, "3: facebook后台的display name是否设置了");
-				Log.d(TAG, "4: facebook后台的启动Activity全路径是否设置了");
-				Log.d(TAG, "5: 如果是测试环境，是否使用的facebook测试账号");
-				Log.d(TAG, "Facebook::login login error! : " + e.toString());
-				onLoginCallBack.onLoginCallBack(false, null);
-				onLoginCallBack = null;
-			}
-		});
+					@Override
+					public void onError(FacebookException e) {
+						Log.d(TAG, "请检查如下情况：");
+						Log.d(TAG, "1: APK的keyhash是否跟facebook后台一致");
+						Log.d(TAG, "2: 包名是否跟facebook后台一致");
+						Log.d(TAG, "3: facebook后台的display name是否设置了");
+						Log.d(TAG, "4: facebook后台的启动Activity全路径是否设置了");
+						Log.d(TAG, "5: 如果是测试环境，是否使用的facebook测试账号");
+						Log.d(TAG,
+								"Facebook::login login error! : "
+										+ e.toString());
+						onLoginCallBack.onLoginCallBack(false, null);
+						onLoginCallBack = null;
+					}
+				});
 	}
 
 	// 申请访问账号信息、好友信息、发布分享的权限
 	public void login(OnLoginCallBack onLoginCallBack) {
 
 		this.onLoginCallBack = onLoginCallBack;
-		LoginManager.getInstance().logInWithReadPermissions((Activity) activity,
+		LoginManager.getInstance().logInWithReadPermissions(
+				(Activity) activity,
 				Arrays.asList("public_profile", "user_friends"));
 	}
 
@@ -183,30 +188,31 @@ public class Facebook {
 	// peopleIds 分享到的好友id
 	// contentUri 内容uri
 	// refUrl 推荐网址
-	public void sharePhotoByUri(String imageUri, String caption, List<String> peopleIds, Uri contentUri, String refUrl,
+	public void sharePhotoByUri(String imageUri, String caption,
+			List<String> peopleIds, String contentUri, String refUrl,
 			final OnPhotoShareCallBack listener) {
 
 		List<SharePhoto> photos = new ArrayList<>();
-		SharePhoto photo = new SharePhoto.Builder().setImageUrl(Uri.parse(imageUri)).setCaption(caption).build();
+		SharePhoto photo = new SharePhoto.Builder()
+				.setImageUrl(Uri.parse(imageUri)).setCaption(caption).build();
 		photos.add(photo);
 
 		SharePhotoContent.Builder builder = new SharePhotoContent.Builder();
 		builder.addPhotos(photos);
 		if (contentUri != null)
-			builder.setContentUrl(contentUri);
+			builder.setContentUrl(Uri.parse(contentUri));
 		if (peopleIds != null)
 			builder.setPeopleIds(peopleIds);
 		if (refUrl != null)
 			builder.setRef(refUrl);
-		if (peopleIds != null)
-			builder.setPeopleIds(peopleIds);
 		SharePhotoContent sharePhotoContent = builder.build();
 
 		FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
 
 			@Override
 			public void onSuccess(Result result) {
-				Log.d(TAG, "Facebook::sharePhotoByUri facebook分享成功, 结果:" + result);
+				Log.d(TAG, "Facebook::sharePhotoByUri facebook分享成功, 结果:"
+						+ result);
 				listener.onPhotoShareCallBack(true);
 			}
 
@@ -219,7 +225,8 @@ public class Facebook {
 			@Override
 			public void onError(FacebookException error) {
 				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::sharePhotoByUri facebook分享失败，失败信息:" + error);
+				Log.d(TAG, "Facebook::sharePhotoByUri facebook分享失败，失败信息:"
+						+ error);
 				listener.onPhotoShareCallBack(false);
 			}
 		};
@@ -241,11 +248,13 @@ public class Facebook {
 	// peopleIds 分享到的好友id
 	// contentUri 内容uri
 	// refUrl 推荐网址
-	public void sharePhoto(Bitmap bitmap, String caption, List<String> peopleIds, Uri contentUri, String refUrl,
+	public void sharePhoto(Bitmap bitmap, String caption,
+			List<String> peopleIds, Uri contentUri, String refUrl,
 			final OnPhotoShareCallBack listener) {
 
 		List<SharePhoto> photos = new ArrayList<>();
-		SharePhoto photo = new SharePhoto.Builder().setBitmap(bitmap).setCaption(caption).build();
+		SharePhoto photo = new SharePhoto.Builder().setBitmap(bitmap)
+				.setCaption(caption).build();
 		photos.add(photo);
 
 		SharePhotoContent.Builder builder = new SharePhotoContent.Builder();
@@ -298,7 +307,8 @@ public class Facebook {
 	// title 链接内容的标题
 	// contentDescription 描述内容
 	// imageUrl 缩略图图像的URL
-	public void shareUrl(String url, String title, String contentDescription, String imageUrl, List<String> peopleIds,
+	public void shareUrl(String url, String title, String contentDescription,
+			String imageUrl, List<String> peopleIds,
 			final OnUrlShareCallBack listener) {
 
 		ShareLinkContent.Builder builder = new ShareLinkContent.Builder();
@@ -344,83 +354,101 @@ public class Facebook {
 	}
 
 	// 向指定好友分享游戏
-	public void shareGame(String title, String message, String urerId, String ObjectId,
-			final OnGameShareCallBack listener) {
+	public void shareGame(String title, String message, String urerId,
+			String ObjectId, final OnGameShareCallBack listener) {
 
 		GameRequestDialog shareGameDialog = new GameRequestDialog(activity);
 		GameRequestContent content = null;
 		if (urerId != null && ObjectId == null) {
-			content = new GameRequestContent.Builder().setMessage(message).setTitle(title).setTo(urerId).build();
+			content = new GameRequestContent.Builder().setMessage(message)
+					.setTitle(title).setTo(urerId).build();
 		} else if (urerId == null && ObjectId != null) {
-			content = new GameRequestContent.Builder().setMessage(message).setActionType(ActionType.SEND)
-					.setObjectId(ObjectId).setTitle(title).build();
+			content = new GameRequestContent.Builder().setMessage(message)
+					.setActionType(ActionType.SEND).setObjectId(ObjectId)
+					.setTitle(title).build();
 		} else {
-			content = new GameRequestContent.Builder().setMessage(message).setTitle(title).build();
+			content = new GameRequestContent.Builder().setMessage(message)
+					.setTitle(title).build();
 		}
-		shareGameDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
+		shareGameDialog.registerCallback(callbackManager,
+				new FacebookCallback<GameRequestDialog.Result>() {
 
-			@Override
-			public void onSuccess(com.facebook.share.widget.GameRequestDialog.Result result) {
-				Log.d(TAG, "Facebook::shareGame facebook分享成功, 结果:" + result);
-				listener.onGameShareCallBack(true);
-			}
+					@Override
+					public void onSuccess(
+							com.facebook.share.widget.GameRequestDialog.Result result) {
+						Log.d(TAG, "Facebook::shareGame facebook分享成功, 结果:"
+								+ result);
+						listener.onGameShareCallBack(true);
+					}
 
-			@Override
-			public void onError(FacebookException error) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::shareGame facebook分享失败，失败信息:" + error);
-				listener.onGameShareCallBack(false);
-			}
+					@Override
+					public void onError(FacebookException error) {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "Facebook::shareGame facebook分享失败，失败信息:"
+								+ error);
+						listener.onGameShareCallBack(false);
+					}
 
-			@Override
-			public void onCancel() {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::shareGame facebook取消分享");
-				listener.onGameShareCallBack(false);
-			}
-		});
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "Facebook::shareGame facebook取消分享");
+						listener.onGameShareCallBack(false);
+					}
+				});
 		shareGameDialog.show(content);
 	}
 
 	// 分享到facebook主页（类似朋友圈）
-	public void shareGameToFacebookHomepage(String actionType, String objectKey, String previewPropertyName,
-			ArrayList<String> list, final OnShareGameToFacebookHomepageCallBack listener) {
+	public void shareGameToFacebookHomepage(String actionType,
+			String objectKey, String previewPropertyName,
+			ArrayList<String> list,
+			final OnShareGameToFacebookHomepageCallBack listener) {
 
 		ShareDialog shareDialog = new ShareDialog(activity);
-		shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+		shareDialog.registerCallback(callbackManager,
+				new FacebookCallback<Sharer.Result>() {
 
-			@Override
-			public void onSuccess(Result result) {
-				Log.d(TAG, "Facebook::shareGameToFacebookHomepage facebook分享成功, 结果:" + result);
-				listener.onShareGameToFacebookHomepageCallBack(true);
-			}
+					@Override
+					public void onSuccess(Result result) {
+						Log.d(TAG,
+								"Facebook::shareGameToFacebookHomepage facebook分享成功, 结果:"
+										+ result);
+						listener.onShareGameToFacebookHomepageCallBack(true);
+					}
 
-			@Override
-			public void onCancel() {
-				Log.d(TAG, "Facebook::shareGameToFacebookHomepage facebook取消分享");
-				listener.onShareGameToFacebookHomepageCallBack(false);
-			}
+					@Override
+					public void onCancel() {
+						Log.d(TAG,
+								"Facebook::shareGameToFacebookHomepage facebook取消分享");
+						listener.onShareGameToFacebookHomepageCallBack(false);
+					}
 
-			@Override
-			public void onError(FacebookException error) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::shareGameToFacebookHomepage facebook分享失败，失败信息:" + error);
-				listener.onShareGameToFacebookHomepageCallBack(false);
-			}
-		});
+					@Override
+					public void onError(FacebookException error) {
+						// TODO Auto-generated method stub
+						Log.d(TAG,
+								"Facebook::shareGameToFacebookHomepage facebook分享失败，失败信息:"
+										+ error);
+						listener.onShareGameToFacebookHomepageCallBack(false);
+					}
+				});
 
 		// Create an object
-		ShareOpenGraphObject object = new ShareOpenGraphObject.Builder().putString("og:type", "books.book")
+		ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
+				.putString("og:type", "books.book")
 				.putString("og:title", "A Game of Thrones")
-				.putString("og:description",
+				.putString(
+						"og:description",
 						"In the frozen wastes to the north of Winterfell, sinister and supernatural forces are mustering.")
 				.putString("books:isbn", "0-553-57340-3").build();
 		// Create an action
-		ShareOpenGraphAction action = new ShareOpenGraphAction.Builder().setActionType(actionType)
-				.putObject(objectKey, object).build();
+		ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
+				.setActionType(actionType).putObject(objectKey, object).build();
 		// Create the content
-		ShareOpenGraphContent content = new ShareOpenGraphContent.Builder().setPreviewPropertyName(previewPropertyName)
-				.setAction(action).build();
+		ShareOpenGraphContent content = new ShareOpenGraphContent.Builder()
+				.setPreviewPropertyName(previewPropertyName).setAction(action)
+				.build();
 		shareDialog.show(content);
 	}
 
@@ -432,8 +460,9 @@ public class Facebook {
 	// peopleIds
 	// toId
 	// 另一种链接分享方式，使用web页面分享
-	public void shareFeed(String applink, String linkName, String caption, String description, String imageUrl,
-			List<String> peopleIds, String toId, final OnShareFeedCallBack listener) {
+	public void shareFeed(String applink, String linkName, String caption,
+			String description, String imageUrl, List<String> peopleIds,
+			String toId, final OnShareFeedCallBack listener) {
 
 		ShareFeedContent.Builder builder = new ShareFeedContent.Builder();
 		builder.setToId(toId);
@@ -449,69 +478,87 @@ public class Facebook {
 		ShareFeedContent shareContent = builder.build();
 
 		ShareDialog shareDialog = new ShareDialog(activity);
-		shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+		shareDialog.registerCallback(callbackManager,
+				new FacebookCallback<Sharer.Result>() {
 
-			@Override
-			public void onSuccess(Result result) {
-				Log.d(TAG, "Facebook::onShareFeedCallBack facebook分享成功, 结果:" + result);
-				listener.onShareFeedCallBack(true);
-			}
+					@Override
+					public void onSuccess(Result result) {
+						Log.d(TAG,
+								"Facebook::onShareFeedCallBack facebook分享成功, 结果:"
+										+ result);
+						listener.onShareFeedCallBack(true);
+					}
 
-			@Override
-			public void onCancel() {
-				Log.d(TAG, "Facebook::onShareFeedCallBack facebook取消分享");
-				listener.onShareFeedCallBack(false);
-			}
+					@Override
+					public void onCancel() {
+						Log.d(TAG, "Facebook::onShareFeedCallBack facebook取消分享");
+						listener.onShareFeedCallBack(false);
+					}
 
-			@Override
-			public void onError(FacebookException error) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::onShareFeedCallBack facebook分享失败，失败信息:" + error);
-				listener.onShareFeedCallBack(false);
-			}
-		});
+					@Override
+					public void onError(FacebookException error) {
+						// TODO Auto-generated method stub
+						Log.d(TAG,
+								"Facebook::onShareFeedCallBack facebook分享失败，失败信息:"
+										+ error);
+						listener.onShareFeedCallBack(false);
+					}
+				});
 		shareDialog.show(shareContent);
 	}
 
 	// 邀请好友
-	public void inviteFriends(String applinkUrl, String previewImageUrl, final OnInviteCallBack listener) {
-		AppInviteContent appInviteContent = new AppInviteContent.Builder().setApplinkUrl(applinkUrl)
-				.setPreviewImageUrl(previewImageUrl).build();
+	public void inviteFriends(String applinkUrl, String previewImageUrl,
+			final OnInviteCallBack listener) {
+		AppInviteContent appInviteContent = new AppInviteContent.Builder()
+				.setApplinkUrl(applinkUrl).setPreviewImageUrl(previewImageUrl)
+				.build();
 
 		AppInviteDialog appInviteDialog = new AppInviteDialog(activity);
 		appInviteDialog.show(appInviteContent);
-		appInviteDialog.registerCallback(callbackManager, new FacebookCallback<AppInviteDialog.Result>() {
-			@Override
-			public void onSuccess(com.facebook.share.widget.AppInviteDialog.Result result) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::inviteFriends facebook邀请好友成功, 结果：" + result.toString());
-				listener.onInviteCallBack(true);
-			}
+		appInviteDialog.registerCallback(callbackManager,
+				new FacebookCallback<AppInviteDialog.Result>() {
+					@Override
+					public void onSuccess(
+							com.facebook.share.widget.AppInviteDialog.Result result) {
+						// TODO Auto-generated method stub
+						Log.d(TAG,
+								"Facebook::inviteFriends facebook邀请好友成功, 结果："
+										+ result.toString());
+						listener.onInviteCallBack(true);
+					}
 
-			@Override
-			public void onError(FacebookException error) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::inviteFriends facebook邀请好友失败, 错误信息：" + error.getMessage());
-				listener.onInviteCallBack(false);
-			}
+					@Override
+					public void onError(FacebookException error) {
+						// TODO Auto-generated method stub
+						Log.d(TAG,
+								"Facebook::inviteFriends facebook邀请好友失败, 错误信息："
+										+ error.getMessage());
+						listener.onInviteCallBack(false);
+					}
 
-			@Override
-			public void onCancel() {
-				// TODO Auto-generated method stub
-				Log.d(TAG, "Facebook::inviteFriends facebook取消好友邀请");
-				listener.onInviteCallBack(false);
-			}
-		});
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "Facebook::inviteFriends facebook取消好友邀请");
+						listener.onInviteCallBack(false);
+					}
+				});
 	}
 
 	// 获取邀请的好友信息
-	public void requestInviteFriendsInfo(String limit, final OnInviteFriendsInfoCallBack listener) {
-		GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
-				"me/invitable_friends", new Callback() {
+	public void requestInviteFriendsInfo(String limit,
+			final OnInviteFriendsInfoCallBack listener) {
+		GraphRequest request = GraphRequest.newGraphPathRequest(
+				AccessToken.getCurrentAccessToken(), "me/invitable_friends",
+				new Callback() {
 					@Override
 					public void onCompleted(GraphResponse response) {
-						Log.d(TAG, "Facebook::requestInvitFriends inviteFriends------response:" + response.toString());
-						listener.onInviteFriendsInfoCallBack(response.toString());
+						Log.d(TAG,
+								"Facebook::requestInvitFriends inviteFriends------response:"
+										+ response.toString());
+						listener.onInviteFriendsInfoCallBack(response
+								.toString());
 					}
 				});
 
@@ -523,26 +570,31 @@ public class Facebook {
 		request.executeAsync();
 	}
 
-	public void requestAllFriends(String height, String width, String limit, final OnAllFriendsCallBack listener) {
-		GraphRequest graphRequest = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
-				"me/taggable_friends", new Callback() {
+	public void requestAllFriends(String height, String width, String limit,
+			final OnAllFriendsCallBack listener) {
+		GraphRequest graphRequest = GraphRequest.newGraphPathRequest(
+				AccessToken.getCurrentAccessToken(), "me/taggable_friends",
+				new Callback() {
 					@Override
 					public void onCompleted(GraphResponse response) {
 						Log.d(TAG,
-								"Facebook::requestAllFriends facebook获取用户好友的信息------response:" + response.toString());
+								"Facebook::requestAllFriends facebook获取用户好友的信息------response:"
+										+ response.toString());
 
 						parseAllFriendsInfo(response.getJSONObject().toString());
-						listener.onAllFriendsCallBack(response.getJSONObject().toString());
+						listener.onAllFriendsCallBack(response.getJSONObject()
+								.toString());
 					}
 				});
-		String field[] = { "id", "name", "picture.height(" + height + ").width(" + width + ")" };
+		String field[] = { "id", "name",
+				"picture.height(" + height + ").width(" + width + ")" };
 		Bundle parameter = graphRequest.getParameters();
 		if (limit != null) {
 			parameter.putString("limit", limit);
 		}
 		parameter.putString("fields", TextUtils.join(",", field));
 		graphRequest.setParameters(parameter);
-
+		Log.d("facebooktag", graphRequest.toString());
 		GraphRequest.executeBatchAsync(graphRequest);
 	}
 
@@ -581,19 +633,26 @@ public class Facebook {
 	}
 
 	// 获取本应用中FB的好友信息
-	public void requestFriendsInApp(String limit, final OnFriendsInAppCallBack listener) {
+	public void requestFriendsInApp(String limit,
+			final OnFriendsInAppCallBack listener) {
 
 		/*-----------------------------------获取用户的信息-------------------------------------------*/
-		GraphRequest request = GraphRequest.newMyFriendsRequest(AccessToken.getCurrentAccessToken(),
+		GraphRequest request = GraphRequest.newMyFriendsRequest(
+				AccessToken.getCurrentAccessToken(),
 				new GraphJSONArrayCallback() {
 
 					@Override
-					public void onCompleted(JSONArray objects, GraphResponse response) {
-						Log.d(TAG, "Facebook::requestFriendsInApp facebook 获取好友的信息 :" + response.toString());
+					public void onCompleted(JSONArray objects,
+							GraphResponse response) {
+						Log.d(TAG,
+								"Facebook::requestFriendsInApp facebook 获取好友的信息 :"
+										+ response.toString());
 
 						if (response.getJSONObject() != null) {
-							parseAllFriendsInfo(response.getJSONObject().toString());
-							listener.onFriendsInAppCallBack(response.getJSONObject().toString());
+							parseAllFriendsInfo(response.getJSONObject()
+									.toString());
+							listener.onFriendsInAppCallBack(response
+									.getJSONObject().toString());
 						} else {
 							listener.onFriendsInAppCallBack("");
 						}
@@ -601,8 +660,10 @@ public class Facebook {
 				});
 
 		Bundle parameters = new Bundle();
-		parameters.putString("fields",
-				"id,name,picture,email,first_name,last_name,middle_name,name_format,third_party_id,gender");
+		parameters
+				.putString(
+						"fields",
+						"id,name,picture,email,first_name,last_name,middle_name,name_format,third_party_id,gender");
 		if (limit != null) {
 			parameters.putString("limit", limit);
 		}
@@ -611,7 +672,8 @@ public class Facebook {
 	}
 
 	// 获取下一步分页信息
-	public void requestFriendsInAppNextPage(final OnFriendsInAppCallBack listener) {
+	public void requestFriendsInAppNextPage(
+			final OnFriendsInAppCallBack listener) {
 		if (nextPos == null)
 			return;
 
@@ -628,7 +690,8 @@ public class Facebook {
 	}
 
 	// 获取上一步分页信息
-	public void requestFriendsInAppPrevPage(final OnFriendsInAppCallBack listener) {
+	public void requestFriendsInAppPrevPage(
+			final OnFriendsInAppCallBack listener) {
 		if (prevPos == null)
 			return;
 
@@ -644,7 +707,8 @@ public class Facebook {
 		}
 	}
 
-	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+	public void onActivityResult(final int requestCode, final int resultCode,
+			final Intent data) {
 		callbackManager.onActivityResult(requestCode, resultCode, data);
 	}
 
@@ -685,27 +749,69 @@ public class Facebook {
 			return;
 		}
 		/*-----------------------------------获取用户的信息-------------------------------------------*/
-		GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
+		GraphRequest request = GraphRequest.newMeRequest(
+				AccessToken.getCurrentAccessToken(),
 				new GraphRequest.GraphJSONObjectCallback() {
 
 					@Override
-					public void onCompleted(JSONObject object, GraphResponse response) {
+					public void onCompleted(JSONObject object,
+							GraphResponse response) {
 						// Application code
-						Log.d(TAG, "Facebook::getMyInfo facebook获取用户的信息 :" + object.toString());
+						Log.d(TAG, "Facebook::getMyInfo facebook获取用户的信息 :"
+								+ object.toString());
 						if (response.getJSONObject() != null) {
 							try {
 								JSONObject json = response.getJSONObject();
 								FacebookUserModel model = new FacebookUserModel();
-								model.id = AccessToken.getCurrentAccessToken().getUserId();
-								model.name = json.get("name").toString();
-								model.picture = json.get("picture").toString();
-								model.first_name = json.get("first_name").toString();
-								model.last_name = json.get("last_name").toString();
-								model.middle_name = json.get("middle_name").toString();
-								model.name_format = json.get("name_format").toString();
-								model.third_party_id = json.get("third_party_id").toString();
-								model.gender = json.get("gender").toString();
-
+								model.id = AccessToken.getCurrentAccessToken()
+										.getUserId();
+								if (json.get("name") != null) {
+									model.name = json.get("name").toString();
+								} else {
+									model.name = "";
+								}
+								if (json.get("picture") != null) {
+									model.picture = json.get("picture")
+											.toString();
+								} else {
+									model.picture = "";
+								}
+								if (json.get("first_name") != null) {
+									model.first_name = json.get("first_name")
+											.toString();
+								} else {
+									model.first_name = "";
+								}
+								if (json.get("last_name") != null) {
+									model.last_name = json.get("last_name")
+											.toString();
+								} else {
+									model.last_name = "";
+								}
+								if (json.get("middle_name") != null) {
+									model.middle_name = json.get("middle_name")
+											.toString();
+								} else {
+									model.middle_name = "";
+								}
+								if (json.get("name_format") != null) {
+									model.name_format = json.get("name_format")
+											.toString();
+								} else {
+									model.name_format = "";
+								}
+								if (json.get("third_party_id") != null) {
+									model.third_party_id = json.get(
+											"third_party_id").toString();
+								} else {
+									model.third_party_id = "";
+								}
+								if (json.get("gender") != null) {
+									model.gender = json.get("gender")
+											.toString();
+								} else {
+									model.gender = "";
+								}
 								onLoginCallBack.onLoginCallBack(true, model);
 								onLoginCallBack = null;
 							} catch (JSONException ex) {
@@ -719,8 +825,10 @@ public class Facebook {
 					}
 				});
 		Bundle parameters = new Bundle();
-		parameters.putString("fields",
-				"id,name,picture,email,first_name,last_name,middle_name,name_format,third_party_id,gender,location,friends");
+		parameters
+				.putString(
+						"fields",
+						"id,name,picture,email,first_name,last_name,middle_name,name_format,third_party_id,gender,location,friends");
 		request.setParameters(parameters);
 		request.executeAsync();
 

@@ -73,7 +73,7 @@
             android:id="@+id/btn7"
         android:layout_width="100dp"  
         android:layout_height="wrap_content"  
-        android:text="向指定好友分享游戏"/>  
+        android:text="推荐游戏"/>  
                 <Button   
             android:id="@+id/btn8"
         android:layout_width="100dp"  
