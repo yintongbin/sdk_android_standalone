@@ -3,7 +3,7 @@ package com.seastar.spg.sdk;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
 
 import org.json.JSONException;
 
@@ -28,7 +28,7 @@ import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-
+//×¢ÊÍ
 public class Google {
 
 	private static final int REQUEST_CODE_SIGN_IN = 30000;
