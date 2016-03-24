@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import com.facebook.AccessToken;
@@ -594,25 +596,38 @@ public class Facebook {
 		}
 		parameter.putString("fields", TextUtils.join(",", field));
 		graphRequest.setParameters(parameter);
-		Log.d("facebooktag", graphRequest.toString());
+		Log.d(TAG, graphRequest.toString());
 		GraphRequest.executeBatchAsync(graphRequest);
 	}
 
 	// 获取下一步分页信息
+
 	public void requestAllFriendsNextPage(final OnAllFriendsCallBack listener) {
 		if (nextPos == null)
 			return;
 
-		try {
-			OkHttpClient client = new OkHttpClient();
-			Request request = new Request.Builder().url(nextPos).build();
-			Response response = client.newCall(request).execute();
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(nextPos).build();
+		client.newCall(request).enqueue(new okhttp3.Callback() {
 
-			parseAllFriendsInfo(response.body().string());
-			listener.onAllFriendsCallBack(response.body().string());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			@Override
+			public void onResponse(Call arg0, Response response)
+					throws IOException {
+				// TODO 自动生成的方法存根
+				String responseCall = response.body().string();
+				Log.d(TAG, responseCall);
+				parseAllFriendsInfo(responseCall);
+				listener.onAllFriendsCallBack(responseCall);
+
+			}
+
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				// TODO 自动生成的方法存根
+
+			}
+		});
+
 	}
 
 	// 获取上一步分页信息
@@ -620,16 +635,27 @@ public class Facebook {
 		if (prevPos == null)
 			return;
 
-		try {
-			OkHttpClient client = new OkHttpClient();
-			Request request = new Request.Builder().url(prevPos).build();
-			Response response = client.newCall(request).execute();
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(prevPos).build();
+		client.newCall(request).enqueue(new okhttp3.Callback() {
 
-			parseAllFriendsInfo(response.body().string());
-			listener.onAllFriendsCallBack(response.body().string());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			@Override
+			public void onResponse(Call arg0, Response response)
+					throws IOException {
+				// TODO 自动生成的方法存根
+				String responseCall = response.body().string();
+				Log.d(TAG, responseCall);
+				parseAllFriendsInfo(responseCall);
+				listener.onAllFriendsCallBack(responseCall);
+
+			}
+
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				// TODO 自动生成的方法存根
+
+			}
+		});
 	}
 
 	// 获取本应用中FB的好友信息
@@ -677,16 +703,27 @@ public class Facebook {
 		if (nextPos == null)
 			return;
 
-		try {
-			OkHttpClient client = new OkHttpClient();
-			Request request = new Request.Builder().url(nextPos).build();
-			Response response = client.newCall(request).execute();
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(nextPos).build();
+		client.newCall(request).enqueue(new okhttp3.Callback() {
 
-			parseAllFriendsInfo(response.body().string());
-			listener.onFriendsInAppCallBack(response.body().string());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			@Override
+			public void onResponse(Call arg0, Response response)
+					throws IOException {
+				// TODO 自动生成的方法存根
+				String responseCall = response.body().string();
+				parseAllFriendsInfo(responseCall);
+				listener.onFriendsInAppCallBack(responseCall);
+				Log.d(TAG, responseCall);
+			}
+
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				// TODO 自动生成的方法存根
+
+			}
+		});
+
 	}
 
 	// 获取上一步分页信息
@@ -695,16 +732,27 @@ public class Facebook {
 		if (prevPos == null)
 			return;
 
-		try {
-			OkHttpClient client = new OkHttpClient();
-			Request request = new Request.Builder().url(prevPos).build();
-			Response response = client.newCall(request).execute();
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(prevPos).build();
+		client.newCall(request).enqueue(new okhttp3.Callback() {
 
-			parseAllFriendsInfo(response.body().string());
-			listener.onFriendsInAppCallBack(response.body().string());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			@Override
+			public void onResponse(Call arg0, Response response)
+					throws IOException {
+				// TODO 自动生成的方法存根
+				String responseCall = response.body().string();
+				parseAllFriendsInfo(responseCall);
+				listener.onFriendsInAppCallBack(responseCall);
+				Log.d(TAG, responseCall);
+			}
+
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				// TODO 自动生成的方法存根
+
+			}
+		});
+
 	}
 
 	public void onActivityResult(final int requestCode, final int resultCode,
@@ -718,14 +766,33 @@ public class Facebook {
 
 	private void parseAllFriendsInfo(String response) {
 		try {
-			JSONObject obj;
+			JSONObject obj = null;
 			obj = new JSONObject(response);
-			JSONArray data = obj.getJSONArray("data");
-			String paging = obj.getString("paging");
-			JSONObject pagingObj = new JSONObject(paging.toString());
+			JSONArray data = null;
+			if (obj.has("data")) {
+				data = obj.getJSONArray("data");
+			}
+			String paging = "";
+			if(obj.has("paging"))
+			{
+			paging = obj.getString("paging");
+			}
+			JSONObject pagingObj = null;
+			if(paging != "")
+			{
+			pagingObj = new JSONObject(paging.toString());
+			}
 			if (data != null && data.length() > 0) {
-				nextPos = pagingObj.getString("next");
-				prevPos = pagingObj.getString("previous");
+				if (pagingObj.has("next")) {
+					nextPos = pagingObj.getString("next");
+				} else {
+					nextPos = null;
+				}
+				if (pagingObj.has("previous")) {
+					prevPos = pagingObj.getString("previous");
+				} else {
+					prevPos = null;
+				}
 			} else {
 				nextPos = null;
 				prevPos = null;
@@ -765,48 +832,48 @@ public class Facebook {
 								FacebookUserModel model = new FacebookUserModel();
 								model.id = AccessToken.getCurrentAccessToken()
 										.getUserId();
-								if (json.get("name") != null) {
+								if (json.has("name")) {
 									model.name = json.get("name").toString();
 								} else {
 									model.name = "";
 								}
-								if (json.get("picture") != null) {
+								if (json.has("picture")) {
 									model.picture = json.get("picture")
 											.toString();
 								} else {
 									model.picture = "";
 								}
-								if (json.get("first_name") != null) {
+								if (json.has("first_name")) {
 									model.first_name = json.get("first_name")
 											.toString();
 								} else {
 									model.first_name = "";
 								}
-								if (json.get("last_name") != null) {
+								if (json.has("last_name")) {
 									model.last_name = json.get("last_name")
 											.toString();
 								} else {
 									model.last_name = "";
 								}
-								if (json.get("middle_name") != null) {
+								if (json.has("middle_name")) {
 									model.middle_name = json.get("middle_name")
 											.toString();
 								} else {
 									model.middle_name = "";
 								}
-								if (json.get("name_format") != null) {
+								if (json.has("name_format")) {
 									model.name_format = json.get("name_format")
 											.toString();
 								} else {
 									model.name_format = "";
 								}
-								if (json.get("third_party_id") != null) {
+								if (json.has("third_party_id")) {
 									model.third_party_id = json.get(
 											"third_party_id").toString();
 								} else {
 									model.third_party_id = "";
 								}
-								if (json.get("gender") != null) {
+								if (json.has("gender")) {
 									model.gender = json.get("gender")
 											.toString();
 								} else {
