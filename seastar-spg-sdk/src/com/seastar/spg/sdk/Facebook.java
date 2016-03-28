@@ -22,6 +22,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphRequest.GraphJSONArrayCallback;
 import com.facebook.GraphResponse;
 import com.facebook.GraphRequest.Callback;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.share.ShareApi;
@@ -174,13 +175,21 @@ public class Facebook {
 
 	// 申请访问账号信息、好友信息、发布分享的权限
 	public void login(OnLoginCallBack onLoginCallBack) {
-
 		this.onLoginCallBack = onLoginCallBack;
+		AccessToken token = AccessToken.getCurrentAccessToken();
+		if (token != null && !token.isExpired()) {
+			getMyInfo();
+			return;
+		}
+		
+
+		
 		LoginManager.getInstance().logInWithReadPermissions(
 				(Activity) activity,
 				Arrays.asList("public_profile", "user_friends"));
 	}
-
+		
+	
 	public void logout() {
 		LoginManager.getInstance().logOut();
 	}
@@ -755,11 +764,14 @@ public class Facebook {
 
 	}
 
+
 	public void onActivityResult(final int requestCode, final int resultCode,
 			final Intent data) {
 		callbackManager.onActivityResult(requestCode, resultCode, data);
+		AppEventsLogger.activateApp(activity);
 	}
 
+	
 	public void setCurActivity(Activity activity) {
 		this.activity = activity;
 	}
