@@ -730,7 +730,7 @@ public class Facebook {
 			public void onFailure(Call arg0, IOException arg1) {
 				// TODO 自动生成的方法存根
 
-			}
+			} 
 		});
 
 	}
