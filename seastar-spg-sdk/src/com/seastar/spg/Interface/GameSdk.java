@@ -114,7 +114,7 @@ public class GameSdk {
 			}
 		};
 	}
-	
+
 	public static void doFbInit() {
 		handler.sendEmptyMessage(0);
 	}
@@ -247,50 +247,47 @@ public class GameSdk {
 		msg.what = 16;
 		handler.sendMessage(msg);
 	}
-	
-	public static void doRequestAllFriends(String height, String width, String limit)
-	{
+
+	public static void doRequestAllFriends(String height, String width,
+			String limit) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
 		bundle.putString("height", height);
 		bundle.putString("width", width);
 		bundle.putString("limit", limit);
 		msg.what = 17;
+		msg.obj = bundle;
 		handler.sendMessage(msg);
 	}
-	
-	public static void doRequestAllFriendsNextPage()
-	{
+
+	public static void doRequestAllFriendsNextPage() {
 		Message msg = new Message();
 		msg.what = 18;
 		handler.sendMessage(msg);
 	}
-	
-	public static void doRequestAllFriendsPrevPage()
-	{
+
+	public static void doRequestAllFriendsPrevPage() {
 		Message msg = new Message();
 		msg.what = 19;
 		handler.sendMessage(msg);
 	}
 
-	public static void doRequestFriendsInApp(String limit)
-	{
+	public static void doRequestFriendsInApp(String limit) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
 		bundle.putString("limit", limit);
 		msg.what = 20;
-		handler.sendMessage(msg); 
+		msg.obj = bundle;
+		handler.sendMessage(msg);
 	}
-	
-	public static void doRequestFriendsInAppNextPage(String graph)
-	{
+
+	public static void doRequestFriendsInAppNextPage() {
 		Message msg = new Message();
 		msg.what = 21;
 		handler.sendMessage(msg);
 	}
 
-	public static void doRequestFriendsInAppPrevPage(String graph)
-	{
+	public static void doRequestFriendsInAppPrevPage() {
 		Message msg = new Message();
 		msg.what = 22;
 		handler.sendMessage(msg);
@@ -356,7 +353,7 @@ public class GameSdk {
 				// TODO 自动生成的方法存根
 				if (success) {
 					try {
-						
+
 						JSONObject obj = new JSONObject();
 						obj.put("id", googleUserModel.id);
 						obj.put("ageRange", googleUserModel.ageRange);
@@ -369,7 +366,7 @@ public class GameSdk {
 						obj.put("name", googleUserModel.name);
 						obj.put("nickName", googleUserModel.nickName);
 						obj.put("url", googleUserModel.url);
-						Log.d("googleLoginimpl",obj.toString() );
+						Log.d("googleLoginimpl", obj.toString());
 						onGoogleLoginCb(1, obj.toString());
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -546,27 +543,23 @@ public class GameSdk {
 	private static void doUnlockAchievementImpl(Message msg) {
 		final Bundle bundle = (Bundle) msg.obj;
 		google.unlockAchievement(bundle.getString("achievementId"));
-		onUnlockAchievement(bundle.getString("achievementId"));
 	}
 
 	private static void doIncrementAchievementImpl(Message msg) {
 		final Bundle bundle = (Bundle) msg.obj;
 		google.incrementAchievement(bundle.getString("achievementId"),
 				bundle.getShort("score"));
-		onIncrementAchievement(bundle.getString("achievementId"),
-				bundle.getShort("score"));
+
 	}
 
 	private static void doShowAchievementImpl() {
 		google.showAchievement();
-		onShowAchievement();
+
 	}
 
 	private static void doUpdateScoreOnLeaderboard(Message msg) {
 		final Bundle bundle = (Bundle) msg.obj;
 		google.updateScoreOnLeaderboard(bundle.getString("leaderboardId"),
-				Integer.parseInt(bundle.getString("score")));
-		onUpdateScoreOnLeaderboard(bundle.getString("leaderboardId"),
 				Integer.parseInt(bundle.getString("score")));
 	}
 
@@ -585,6 +578,8 @@ public class GameSdk {
 					public void onAllFriendsCallBack(String graph) {
 						// TODO 自动生成的方法存根
 						onRequestAllFriends(graph);
+						
+						Log.d("FACEBOOKLIST", graph);
 					}
 				});
 	}
@@ -620,7 +615,7 @@ public class GameSdk {
 					@Override
 					public void onFriendsInAppCallBack(String graph) {
 						// TODO 自动生成的方法存根
-						onFriendsInAppCallBack(graph);	
+						onRequestFriendsInApp(graph);
 					}
 				});
 	}
@@ -631,7 +626,7 @@ public class GameSdk {
 			@Override
 			public void onFriendsInAppCallBack(String graph) {
 				// TODO 自动生成的方法存根
-				doRequestFriendsInAppNextPage(graph);
+				onRequestFriendsInAppNextPage(graph);
 			}
 		});
 	}
@@ -642,7 +637,7 @@ public class GameSdk {
 			@Override
 			public void onFriendsInAppCallBack(String graph) {
 				// TODO 自动生成的方法存根
-				doRequestFriendsInAppPrevPage(graph);
+				onRequestFriendsInAppPrevPage(graph);
 			}
 		});
 	}
@@ -674,16 +669,6 @@ public class GameSdk {
 	public static native void onFacebookShareLink(int flags);
 
 	public static native void onInviteFriends(int flags);
-
-	public static native void onUnlockAchievement(String achievementId);
-
-	public static native void onIncrementAchievement(String achievementId,
-			int score);
-
-	public static native void onShowAchievement();
-
-	public static native void onUpdateScoreOnLeaderboard(String leaderboardId,
-			int score);
 
 	public static native void onShowLeaderboard();
 
