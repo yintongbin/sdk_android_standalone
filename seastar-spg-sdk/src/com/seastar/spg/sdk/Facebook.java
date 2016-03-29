@@ -172,7 +172,7 @@ public class Facebook {
 					}
 				});
 	}
-
+ 
 	// 申请访问账号信息、好友信息、发布分享的权限
 	public void login(OnLoginCallBack onLoginCallBack) {
 		this.onLoginCallBack = onLoginCallBack;
