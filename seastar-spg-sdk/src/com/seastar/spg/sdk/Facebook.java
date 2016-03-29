@@ -181,15 +181,12 @@ public class Facebook {
 			getMyInfo();
 			return;
 		}
-		
 
-		
 		LoginManager.getInstance().logInWithReadPermissions(
 				(Activity) activity,
 				Arrays.asList("public_profile", "user_friends"));
 	}
-		
-	
+
 	public void logout() {
 		LoginManager.getInstance().logOut();
 	}
@@ -730,7 +727,7 @@ public class Facebook {
 			public void onFailure(Call arg0, IOException arg1) {
 				// TODO 自动生成的方法存根
 
-			} 
+			}
 		});
 
 	}
@@ -764,14 +761,12 @@ public class Facebook {
 
 	}
 
-
 	public void onActivityResult(final int requestCode, final int resultCode,
 			final Intent data) {
 		callbackManager.onActivityResult(requestCode, resultCode, data);
 		AppEventsLogger.activateApp(activity);
 	}
 
-	
 	public void setCurActivity(Activity activity) {
 		this.activity = activity;
 	}
@@ -785,14 +780,12 @@ public class Facebook {
 				data = obj.getJSONArray("data");
 			}
 			String paging = "";
-			if(obj.has("paging"))
-			{
-			paging = obj.getString("paging");
+			if (obj.has("paging")) {
+				paging = obj.getString("paging");
 			}
 			JSONObject pagingObj = null;
-			if(paging != "")
-			{
-			pagingObj = new JSONObject(paging.toString());
+			if (paging != "") {
+				pagingObj = new JSONObject(paging.toString());
 			}
 			if (data != null && data.length() > 0) {
 				if (pagingObj.has("next")) {
@@ -891,6 +884,7 @@ public class Facebook {
 								} else {
 									model.gender = "";
 								}
+
 								onLoginCallBack.onLoginCallBack(true, model);
 								onLoginCallBack = null;
 							} catch (JSONException ex) {
