@@ -15,6 +15,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.telephony.CellLocation;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.provider.Settings;
+import android.provider.Settings.Secure;
+
 public class Appsflyer {
 
 	private static Handler handler;
@@ -228,7 +237,22 @@ public class Appsflyer {
 	public static void doAppsflyer_initImpl(Message msg) {
 
 		final Bundle bundle = (Bundle) msg.obj;
-		AppsFlyerLib.getInstance().init(activity, bundle.getString("devkey"));
+		AppsFlyerLib.getInstance().startTracking(activity,
+				bundle.getString("devkey"));
+
+		try {
+			TelephonyManager tm = (TelephonyManager) activity
+					.getSystemService(Context.TELEPHONY_SERVICE);
+			String android_id = Secure.getString(activity.getContentResolver(),
+					Secure.ANDROID_ID);
+
+			AppsFlyerLib.getInstance().setImeiData(activity, tm.getDeviceId());
+			AppsFlyerLib.getInstance().setAndroidIdData(activity, android_id);
+
+		} catch (Exception ex) {
+
+		}
+
 	}
 
 	/**
@@ -364,6 +388,7 @@ public class Appsflyer {
 	 * 
 	 * @param activity
 	 * @param eventName
+	 * 
 	 *            可以为任何字符串，不过appsflyer有推荐字符串
 	 */
 	public static void doAppsflyer_customImpl(Message msg) {
@@ -392,5 +417,4 @@ public class Appsflyer {
 
 	}
 
-	
 }

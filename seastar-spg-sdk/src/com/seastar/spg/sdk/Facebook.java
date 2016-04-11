@@ -58,7 +58,7 @@ public class Facebook {
 
 	public interface OnLoginCallBack {
 
-		void onLoginCallBack(boolean isLogin, FacebookUserModel user);
+		void onLoginCallBack(boolean isLogin, String user);
 	}
 
 	public interface OnInitCallBack {
@@ -99,21 +99,6 @@ public class Facebook {
 
 	public interface OnFriendsInAppCallBack {
 		void onFriendsInAppCallBack(String graph);
-	}
-
-	public class FacebookUserModel {
-		public String id;
-		public String name;
-		public String picture;
-		public String email;
-		public String first_name;
-		public String last_name;
-		public String middle_name;
-		public String name_format;
-		public String third_party_id;
-		public String gender;
-		public String location;
-		public String friends;
 	}
 
 	private OnLoginCallBack onLoginCallBack;
@@ -172,7 +157,7 @@ public class Facebook {
 					}
 				});
 	}
- 
+
 	// 申请访问账号信息、好友信息、发布分享的权限
 	public void login(OnLoginCallBack onLoginCallBack) {
 		this.onLoginCallBack = onLoginCallBack;
@@ -668,7 +653,7 @@ public class Facebook {
 	public void requestFriendsInApp(String limit,
 			final OnFriendsInAppCallBack listener) {
 
-		/*-----------------------------------获取用户的信息-------------------------------------------*/
+		/*-----------------------------------获取用户的信息------  -------------------------------------*/
 		GraphRequest request = GraphRequest.newMyFriendsRequest(
 				AccessToken.getCurrentAccessToken(),
 				new GraphJSONArrayCallback() {
@@ -832,64 +817,10 @@ public class Facebook {
 						Log.d(TAG, "Facebook::getMyInfo facebook获取用户的信息 :"
 								+ object.toString());
 						if (response.getJSONObject() != null) {
-							try {
-								JSONObject json = response.getJSONObject();
-								FacebookUserModel model = new FacebookUserModel();
-								model.id = AccessToken.getCurrentAccessToken()
-										.getUserId();
-								if (json.has("name")) {
-									model.name = json.get("name").toString();
-								} else {
-									model.name = "";
-								}
-								if (json.has("picture")) {
-									model.picture = json.get("picture")
-											.toString();
-								} else {
-									model.picture = "";
-								}
-								if (json.has("first_name")) {
-									model.first_name = json.get("first_name")
-											.toString();
-								} else {
-									model.first_name = "";
-								}
-								if (json.has("last_name")) {
-									model.last_name = json.get("last_name")
-											.toString();
-								} else {
-									model.last_name = "";
-								}
-								if (json.has("middle_name")) {
-									model.middle_name = json.get("middle_name")
-											.toString();
-								} else {
-									model.middle_name = "";
-								}
-								if (json.has("name_format")) {
-									model.name_format = json.get("name_format")
-											.toString();
-								} else {
-									model.name_format = "";
-								}
-								if (json.has("third_party_id")) {
-									model.third_party_id = json.get(
-											"third_party_id").toString();
-								} else {
-									model.third_party_id = "";
-								}
-								if (json.has("gender")) {
-									model.gender = json.get("gender")
-											.toString();
-								} else {
-									model.gender = "";
-								}
-
-								onLoginCallBack.onLoginCallBack(true, model);
-								onLoginCallBack = null;
-							} catch (JSONException ex) {
-								ex.printStackTrace();
-							}
+							JSONObject json = response.getJSONObject();
+							onLoginCallBack.onLoginCallBack(true,
+									json.toString());
+							onLoginCallBack = null;
 
 						} else {
 							onLoginCallBack.onLoginCallBack(false, null);
@@ -906,4 +837,9 @@ public class Facebook {
 		request.executeAsync();
 
 	}
+
+	public void onResume() {
+		AppEventsLogger.activateApp(activity);
+	}
+
 }

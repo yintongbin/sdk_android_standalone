@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,7 +42,7 @@ public class Google {
 	private static final String TAG = "SeaStar";
 
 	public interface OnLoginCallBack {
-		void onLoginCallBack(boolean success, GoogleUserModel googleUserModel);
+		void onLoginCallBack(boolean success, String googleUserModel);
 	}
 
 	public interface OnInitCallBack {
@@ -48,8 +50,7 @@ public class Google {
 	}
 
 	public interface OnQueryInventoryCallBack {
-		void onQueryInventoryCallBack(boolean success,
-				List<GoogleSkuModel> googleSkuModel);
+		void onQueryInventoryCallBack(boolean success, String googleSkuModel);
 	}
 
 	public class GoogleUserModel {
@@ -142,80 +143,31 @@ public class Google {
 			if (person != null) {
 				Log.d(TAG, "Google::ConnectionCb::onConnected 获取账号信息成功，登陆成功");
 				GoogleUserModel googleUserModel = new GoogleUserModel();
+				JSONObject obj = new JSONObject();
 
-				if (person.hasAboutMe()) {
-					googleUserModel.aboutMe = person.getAboutMe();
-				} else {
-					googleUserModel.aboutMe = "";
+				try {
+					if (person.hasDisplayName()) {
+						obj.put("displayName", person.getDisplayName());
+					}
+					if (person.hasId()) {
+						obj.put("id", person.getId());
+					}
+					if (person.hasImage()) {
+						obj.put("image", person.getImage());
+					}
+					if (person.hasName()) {
+						obj.put("name", person.getName());
+					}
+					if (person.hasNickname()) {
+						obj.put("nickName", person.getNickname());
+					}
+				} catch (JSONException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
 				}
-				if (person.hasAgeRange()) {
-					googleUserModel.ageRange = person.getAgeRange().toString();
-				} else {
-					googleUserModel.ageRange = "";
-				}
-				if (person.hasBirthday()) {
-					googleUserModel.birthday = person.getBirthday();
-				} else {
-					googleUserModel.birthday = "";
-				}
-				if (person.hasBraggingRights()) {
-					googleUserModel.braggingRights = person.getBraggingRights();
-				} else {
-					googleUserModel.braggingRights = "";
-				}
-				if (person.hasCover()) {
-					googleUserModel.cover = person.getCover().toString();
-				} else {
-					googleUserModel.cover = "";
-				}
-				if (person.hasCurrentLocation()) {
-					googleUserModel.currentLocation = person
-							.getCurrentLocation();
-				} else {
-					googleUserModel.currentLocation = "";
-				}
-				if (person.hasDisplayName()) {
-					googleUserModel.displayName = person.getDisplayName();
-				} else {
-					googleUserModel.displayName = "";
-				}
-				if (person.hasId()) {
-					googleUserModel.id = person.getId();
-				} else {
-					googleUserModel.id = "";
-				}
-				if (person.hasImage()) {
-					googleUserModel.image = person.getImage().toString();
-				} else {
-					googleUserModel.image = "";
-				}
-				if (person.hasLanguage()) {
-					googleUserModel.language = person.getLanguage();
-				} else {
-					googleUserModel.language = "";
-				}
-				if (person.hasName()) {
-					googleUserModel.name = person.getName().toString();
-				} else {
-					googleUserModel.name = "";
-				}
-				if (person.hasNickname()) {
-					googleUserModel.nickName = person.getNickname();
-				} else {
-					googleUserModel.nickName = "";
-				}
-				if (person.hasOrganizations()) {
-					googleUserModel.organizations = person.getOrganizations()
-							.toString();
-				} else {
-					googleUserModel.organizations = "";
-				}
-				if (person.hasUrl()) {
-					googleUserModel.url = person.getUrl();
-				} else {
-					googleUserModel.url = "";
-				}
-				onLoginCallBack.onLoginCallBack(true, googleUserModel);
+
+				Log.d(TAG, person.toString());
+				onLoginCallBack.onLoginCallBack(true, obj.toString());
 
 			} else {
 				Log.d(TAG, "Google::ConnectionCb::onConnected 获取账号信息失败，登陆失败");
@@ -252,7 +204,7 @@ public class Google {
 				onLoginCallBack = null;
 			}
 		}
-	};
+	};  
 
 	public void setCurActivity(Activity activity) {
 		this.activity = activity;
@@ -487,8 +439,8 @@ public class Google {
 				public void onQueryInventoryFinished(IabResult result,
 						Inventory inventory) {
 
-					ArrayList<GoogleSkuModel> trans = new ArrayList<GoogleSkuModel>();
-
+					String trans = new String();
+					JSONObject ss = new JSONObject();
 					if (result.isFailure()) {
 						// Handle failure
 						System.out
@@ -501,61 +453,76 @@ public class Google {
 						System.out.println(TAG
 								+ " Google::queryInventoryAsync, 查询在谷歌购买的商品成功");
 						// 漏单处理
+						JSONArray arr = new JSONArray();
 						for (String sku : skuList) {
 
+							JSONObject s = new JSONObject();
 							if (inventory.hasDetails(sku)) {
 								SkuDetails detail = inventory
 										.getSkuDetails(sku);
-								GoogleSkuModel googleSkuModel = new GoogleSkuModel();
-								Log.d(TAG, detail.toString());
-								googleSkuModel.description = detail
-										.getDescription();
-								googleSkuModel.price = detail.getPrice();
-								googleSkuModel.sku = detail.getSku();
-								googleSkuModel.title = detail.getTitle();
-								googleSkuModel.type = detail.getType();
-								googleSkuModel.priceAmountMicros = (new BigDecimal(
-										detail.getPriceAmountMicros())
-										.divide(new BigDecimal(1000000)))
-										.toString();
-								googleSkuModel.priceCurrencyCode = detail
-										.getPriceCurrencyCode();
-								// 存储所有未处理订单
-								if (inventory.hasPurchase(sku)) {
-									Purchase purchase = inventory
-											.getPurchase(sku);
-									System.out
-											.println(TAG
-													+ " Google::queryInventoryAsync, 验证的信息："
-													+ purchase
-															.getOriginalJson());
-									googleSkuModel.googleOrder = purchase
-											.getOrderId();
-									googleSkuModel.signature = purchase
-											.getSignature();
-									googleSkuModel.purchaseOriginalData = purchase
-											.getOriginalJson();
-									googleSkuModel.itemType = purchase
-											.getItemType();
-									System.out
-											.println(TAG
-													+ " Google::queryInventoryAsync, 商品信息："
-													+ detail.toString());
-								}
 
-								trans.add(googleSkuModel);
+								Log.d(TAG, detail.toString());
+
+								try {
+									s.put("description",
+											detail.getDescription());
+
+									s.put("price", detail.getPrice());
+									s.put("sku", detail.getSku());
+									s.put("title", detail.getTitle());
+									s.put("type", detail.getType());
+									s.put("priceAmountMicros", (new BigDecimal(
+											detail.getPriceAmountMicros())
+											.divide(new BigDecimal(1000000)))
+											.toString());
+									s.put("priceCurrencyCode",
+											detail.getPriceCurrencyCode());
+
+									arr.put(s);
+								} catch (JSONException e) {
+									// TODO 自动生成的 catch 块
+									e.printStackTrace();
+								}
 							}
 
+							// 存储所有未处理订单
+							if (inventory.hasPurchase(sku)) {
+								Purchase purchase = inventory.getPurchase(sku);
+								System.out
+										.println(TAG
+												+ " Google::queryInventoryAsync, 验证的信息："
+												+ purchase.getOriginalJson());
+								try {
+									s.put("OrderId", purchase.getOrderId());
+
+									s.put("signature", purchase.getSignature());
+
+									s.put("purchaseOriginalData",
+											purchase.getOriginalJson());
+
+									s.put("itemType", purchase.getItemType());
+								} catch (JSONException e) {
+									// TODO 自动生成的 catch 块
+									e.printStackTrace();
+								}
+							}
+							try {
+								ss.put("skus", s);
+							} catch (JSONException e) {
+								// TODO 自动生成的 catch 块
+								e.printStackTrace();
+							}
+							
+							trans = ss.toString();
 						}
 
-						onQueryInventoryCallBack.onQueryInventoryCallBack(true,
-								trans);
-
 					}
-				}
-			}
 
-			);
+					onQueryInventoryCallBack.onQueryInventoryCallBack(true,
+							trans);
+
+				}
+			});
 		} catch (Exception e) {
 			Log.d(TAG, "查询用户具有的商品信息失败，异常信息：" + e.getMessage());
 			Log.d(TAG, "请检查如下情况：");

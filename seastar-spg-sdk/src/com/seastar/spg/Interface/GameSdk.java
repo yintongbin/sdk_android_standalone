@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.seastar.spg.sdk.*;
-import com.seastar.spg.sdk.Facebook.FacebookUserModel;
 import com.seastar.spg.sdk.Facebook.OnInviteCallBack;
 import com.seastar.spg.sdk.Facebook.OnPhotoShareCallBack;
 import com.seastar.spg.sdk.Google.GoogleSkuModel;
@@ -115,30 +114,37 @@ public class GameSdk {
 		};
 	}
 
+	// facebook初始化
 	public static void doFbInit() {
 		handler.sendEmptyMessage(0);
 	}
 
+	// google初始化
 	public static void doGoogleInit() {
 		handler.sendEmptyMessage(1);
 	}
 
+	// Facebook登录
 	public static void doFbLogin() {
 		handler.sendEmptyMessage(2);
 	}
 
+	// google登录
 	public static void doGoogleLogin() {
 		handler.sendEmptyMessage(3);
 	}
 
+	// facebook登出
 	public static void doFbLogout() {
 		handler.sendEmptyMessage(4);
 	}
 
+	// google登出
 	public static void doGoogleLogout() {
 		handler.sendEmptyMessage(5);
 	}
 
+	// google支付
 	public static void doGooglePay(String sku) {
 		Message msg = new Message();
 		msg.what = 6;
@@ -146,6 +152,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google消费
 	public static void doGoogleConsume(String sku, String itemType,
 			String signature, String purchaseOriginalData) {
 		Bundle bundle = new Bundle();
@@ -160,6 +167,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google查询购买后没有消费的商品
 	public static void queryGoogleInventory(String skus) {
 		Message msg = new Message();
 		msg.what = 8;
@@ -167,6 +175,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// facebook分享图片
 	public static void doFacebookSharePhoto(String imageUri, String caption,
 			String peopleIds, String contentUri, String refUrl) {
 		Message msg = new Message();
@@ -180,6 +189,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// facebook分享链接
 	public static void doFacebookShareLink(String url, String title,
 			String contentDescription, String imageUrl, String peopleIds) {
 		Message msg = new Message();
@@ -194,6 +204,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// facebook邀请好友
 	public static void doInviteFriends(String applinkUrl, String previewImageUrl) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
@@ -204,6 +215,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google解锁成就
 	public static void doUnlockAchievement(String achievementId) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
@@ -213,6 +225,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google给成就加分
 	public static void doIncrementAchievement(String achievementId, int score) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
@@ -223,6 +236,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google排行版
 	public static void doShowAchievement() {
 		Message msg = new Message();
 
@@ -230,6 +244,7 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google排行榜加分
 	public static void doUpdateScoreOnLeaderboard(String leaderboardId,
 			int score) {
 		Message msg = new Message();
@@ -242,12 +257,14 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// google展示排行榜
 	public static void doShowLeaderboard() {
 		Message msg = new Message();
 		msg.what = 16;
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取所有好友
 	public static void doRequestAllFriends(String height, String width,
 			String limit) {
 		Message msg = new Message();
@@ -260,18 +277,21 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取好友下一页
 	public static void doRequestAllFriendsNextPage() {
 		Message msg = new Message();
 		msg.what = 18;
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取好友 上一页
 	public static void doRequestAllFriendsPrevPage() {
 		Message msg = new Message();
 		msg.what = 19;
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取本应用的好友
 	public static void doRequestFriendsInApp(String limit) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
@@ -281,12 +301,14 @@ public class GameSdk {
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取本应用的好友下一页
 	public static void doRequestFriendsInAppNextPage() {
 		Message msg = new Message();
 		msg.what = 21;
 		handler.sendMessage(msg);
 	}
 
+	// facebook获取本应用的好友下一页
 	public static void doRequestFriendsInAppPrevPage() {
 		Message msg = new Message();
 		msg.what = 22;
@@ -317,29 +339,8 @@ public class GameSdk {
 		fb.login(new Facebook.OnLoginCallBack() {
 
 			@Override
-			public void onLoginCallBack(boolean isLogin, FacebookUserModel user) {
+			public void onLoginCallBack(boolean isLogin, String user) {
 				// TODO 自动生成的方法存根
-
-				if (isLogin) {
-					try {
-						JSONObject obj = new JSONObject();
-						obj.put("id", user.id);
-						obj.put("name", user.name);
-						obj.put("picture", user.picture);
-						obj.put("email", user.email);
-						obj.put("first_name", user.first_name);
-						obj.put("last_name", user.last_name);
-						obj.put("middle_name", user.middle_name);
-						obj.put("gender", user.gender);
-						obj.put("location", user.location);
-
-						// onFbLoginCb(1, obj.toString());
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				} else {
-					onFbLoginCb(0, "");
-				}
 			}
 		});
 	}
@@ -348,29 +349,10 @@ public class GameSdk {
 		google.login(new Google.OnLoginCallBack() {
 
 			@Override
-			public void onLoginCallBack(boolean success,
-					GoogleUserModel googleUserModel) {
+			public void onLoginCallBack(boolean success, String googleUserModel) {
 				// TODO 自动生成的方法存根
 				if (success) {
-					try {
-
-						JSONObject obj = new JSONObject();
-						obj.put("id", googleUserModel.id);
-						obj.put("ageRange", googleUserModel.ageRange);
-						obj.put("birthday", googleUserModel.birthday);
-						obj.put("currentLocation",
-								googleUserModel.currentLocation);
-						obj.put("displayName", googleUserModel.displayName);
-						obj.put("image", googleUserModel.image);
-						obj.put("language", googleUserModel.language);
-						obj.put("name", googleUserModel.name);
-						obj.put("nickName", googleUserModel.nickName);
-						obj.put("url", googleUserModel.url);
-						Log.d("googleLoginimpl", obj.toString());
-						onGoogleLoginCb(1, obj.toString());
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+					onGoogleLoginCb(1, googleUserModel.toString());
 
 				} else {
 					onGoogleLoginCb(0, "");
@@ -431,44 +413,16 @@ public class GameSdk {
 
 					@Override
 					public void onQueryInventoryCallBack(boolean success,
-							List<GoogleSkuModel> googleSkuModels) {
+							String googleSkuModels) {
 						if (success) {
-							try {
 
-								JSONObject obj = new JSONObject();
-								JSONArray arr = new JSONArray();
-								obj.put("skus", arr);
-
-								for (GoogleSkuModel sku : googleSkuModels) {
-									JSONObject s = new JSONObject();
-									s.put("description", sku.description);
-									s.put("price", sku.price);
-									s.put("sku", sku.sku);
-									s.put("title", sku.title);
-									s.put("type", sku.type);
-									s.put("priceAmountMicros",
-											sku.priceAmountMicros);
-									s.put("priceCurrencyCode",
-											sku.priceCurrencyCode);
-									s.put("googleOrder", sku.googleOrder);
-									s.put("signature", sku.signature);
-									s.put("purchaseOriginalData",
-											sku.purchaseOriginalData);
-
-									arr.put(s);
-								}
-
-								onQueryGoogleInventory(1, obj.toString());
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
+							onQueryGoogleInventory(1, googleSkuModels);
 
 						} else {
 							onQueryGoogleInventory(0, "");
 						}
 					}
 				});
-
 	}
 
 	private static void doFacebookSharePhotoImpl(Message msg) {
@@ -578,7 +532,6 @@ public class GameSdk {
 					public void onAllFriendsCallBack(String graph) {
 						// TODO 自动生成的方法存根
 						onRequestAllFriends(graph);
-						
 						Log.d("FACEBOOKLIST", graph);
 					}
 				});
@@ -620,6 +573,10 @@ public class GameSdk {
 				});
 	}
 
+	private static void doRequestFriendsPrevPageImpl() {
+
+	}
+
 	private static void doRequestFriendsInAppNextPageImpl() {
 		fb.requestFriendsInAppNextPage(new Facebook.OnFriendsInAppCallBack() {
 
@@ -640,6 +597,10 @@ public class GameSdk {
 				onRequestFriendsInAppPrevPage(graph);
 			}
 		});
+	}
+
+	public static void onResume() {
+		fb.onResume();
 	}
 
 	public static void onActivityResult(int requestCode, int resultCode,
