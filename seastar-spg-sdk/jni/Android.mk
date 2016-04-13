@@ -17,7 +17,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := demo
-LOCAL_SRC_FILES := GameSdk.cpp JniHelper.cpp
+LOCAL_SRC_FILES := GameSdk.cpp JniHelper.cpp Demo.cpp Appsflyer.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 
 include $(BUILD_SHARED_LIBRARY)

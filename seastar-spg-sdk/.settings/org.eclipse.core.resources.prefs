@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
 encoding//jni/GameSdk.cpp=UTF-8
 encoding//jni/GameSdk.h=UTF-8
+encoding//obj/local/armeabi-v7a/libdemo.so=UTF-8
+encoding//obj/local/armeabi/objs/demo/GameSdk.o=UTF-8
+encoding//obj/local/armeabi/objs/demo/JniHelper.o=UTF-8
+encoding//src/com/seastar/spg/Interface/Appsflyer.java=UTF-8
 encoding//src/com/seastar/spg/sdk/Facebook.java=UTF-8
