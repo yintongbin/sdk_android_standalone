@@ -150,14 +150,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		} else if (v.getId() == R.id.btn13) {
 			GameSdk.doRequestFriendsInAppNextPage();
 		}
-		else if(v.getKeepScreenOn() != R.id.btn_)
-		{
-			GameSdk.onGoogleLoginCb(int Flags, String UserName);
-		}
-		else
-		{
-		    GameSdk.onRequestFriendsInAppNextPage(graph); 
-		}
 		
 		
 	}
